@@ -86,10 +86,15 @@ export async function getRecentFixtures(leagueCode) {
 }
 
 export async function getUpcomingFixtures(leagueCode) {
-  const from = getDateString(1);
-  const to = getDateString(14);
-  const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED`);
-  return data.matches || [];
+  const from = getDateString(0);
+  const to = getDateString(30);
+  const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED,TIMED`);
+  const matches = data.matches || [];
+  if (matches.length === 0) return [];
+
+  // Coger el matchday más próximo que aparezca en los resultados
+  const nextMatchday = Math.min(...matches.map(m => m.matchday));
+  return matches.filter(m => m.matchday === nextMatchday);
 }
 
 export async function getLiveFixtures(leagueCode) {
@@ -110,8 +115,11 @@ export async function getTeamRecentMatches(teamId) {
 }
 
 export async function getTeamUpcomingMatches(teamId) {
-  const from = getDateString(1);
-  const to = getDateString(60);
+  const from = getDateString(0);
+  const to = getDateString(30);
   const data = await apiFetch(`/teams/${teamId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED`);
-  return data.matches || [];
+  const matches = data.matches || [];
+
+  // Solo el próximo partido
+  return matches.slice(0, 5);
 }

@@ -22,10 +22,14 @@ function Debug() {
     }
   }
 
+  const today = new Date().toISOString().split('T')[0];
+  const from = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  const to = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0];
+
   const tests = [
-    { label: 'Buscar "Real Madrid"', url: `${BASE_URL}/teams?name=Real%20Madrid` },
-    { label: 'Buscar "Real"', url: `${BASE_URL}/teams?name=Real` },
-    { label: 'Buscar "Barcelona"', url: `${BASE_URL}/teams?name=Barcelona` },
+    { label: 'Próximos Premier', url: `${BASE_URL}/competitions/PL/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED` },
+    { label: 'Próximos La Liga', url: `${BASE_URL}/competitions/PD/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED` },
+    { label: 'Jornada actual Premier', url: `${BASE_URL}/competitions/PL/matches?matchday=29` },
   ];
 
   return (
