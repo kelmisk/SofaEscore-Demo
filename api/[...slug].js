@@ -10,7 +10,9 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(url, {
-      headers: { 'X-Auth-Token': process.env.FOOTBALL_API_KEY },
+      headers: {
+        'X-Auth-Token': process.env.FOOTBALL_API_KEY || process.env.VITE_FOOTBALL_API_KEY,
+      },
     });
     const data = await response.json();
     return res.status(response.status).json(data);
