@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import League from './pages/League';
 import Search from './pages/Search';
 import Team from './pages/Team';
+import Standings from './pages/Standings';
 import Debug from './pages/Debug';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/liga/:leagueKey" element={<League />} />
+          <Route path="/liga/:leagueKey/clasificacion" element={<Standings />} />
           <Route path="/buscar" element={<Search />} />
           <Route path="/equipo/:teamId" element={<Team />} />
           <Route path="/debug" element={<Debug />} />

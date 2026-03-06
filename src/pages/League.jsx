@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { LEAGUES, getLiveFixtures, getRecentFixtures, getUpcomingFixtures, getFixturesToday } from '../services/api';
 import MatchCard from '../components/MatchCard';
 
@@ -7,6 +7,7 @@ const TABS = ['En Vivo', 'Hoy', 'Últimos partidos', 'Próximos partidos'];
 
 function League() {
   const { leagueKey } = useParams();
+  const navigate = useNavigate();
   const league = LEAGUES[leagueKey];
   const [tab, setTab] = useState('Últimos partidos');
   const [matches, setMatches] = useState([]);
@@ -68,6 +69,15 @@ function League() {
             {t}
           </button>
         ))}
+        <button
+          onClick={() => navigate(`/liga/${leagueKey}/clasificacion`)}
+          style={{
+            padding: '8px 16px', borderRadius: 20, border: 'none', cursor: 'pointer',
+            background: '#2a2a3e', color: '#aaa',
+          }}
+        >
+          🏆 Clasificación
+        </button>
       </div>
 
       {loading

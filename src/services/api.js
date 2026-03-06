@@ -97,6 +97,11 @@ export async function getLiveFixtures(leagueCode) {
   return data.matches || [];
 }
 
+export async function getStandings(leagueCode) {
+  const data = await apiFetch(`/competitions/${leagueCode}/standings`);
+  return data.standings?.[0]?.table || [];
+}
+
 export async function getTeamRecentMatches(teamId) {
   const from = getDateString(-60);
   const to = getDateString(0);
