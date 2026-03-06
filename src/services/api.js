@@ -79,10 +79,15 @@ export async function getFixturesToday(leagueCode) {
 }
 
 export async function getRecentFixtures(leagueCode) {
-  const from = getDateString(-14);
+  const from = getDateString(-30);
   const to = getDateString(0);
   const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${from}&dateTo=${to}&status=FINISHED`);
-  return data.matches || [];
+  const matches = data.matches || [];
+  if (matches.length === 0) return [];
+
+  // Coger solo la última jornada jugada
+  const lastMatchday = Math.max(...matches.map(m => m.matchday));
+  return matches.filter(m => m.matchday === lastMatchday);
 }
 
 export async function getUpcomingFixtures(leagueCode) {
