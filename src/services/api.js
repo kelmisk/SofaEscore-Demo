@@ -1,50 +1,59 @@
-const API_KEY = import.meta.env.VITE_API_KEY;
-const BASE_URL = 'https://v3.football.api-sports.io';
+const BASE_URL = '/api';
+const API_KEY = import.meta.env.VITE_FOOTBALL_API_KEY;
 
-const headers = { 'x-apisports-key': API_KEY };
+const headers = { 'X-Auth-Token': API_KEY };
+
+// Cache simple para evitar llamadas repetidas
+const cache = {};
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
+
+async function apiFetch(path) {
+  const now = Date.now();
+  if (cache[path] && now - cache[path].ts < CACHE_TTL) {
+    return cache[path].data;
+  }
+  const res = await fetch(`${BASE_URL}${path}`, { headers });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  cache[path] = { data, ts: now };
+  return data;
+}
 
 export const LEAGUES = {
-  laliga:     { id: 140, name: 'La Liga',        country: 'España',     flag: '🇪🇸' },
-  premier:    { id: 39,  name: 'Premier League', country: 'Inglaterra', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-  seriea:     { id: 135, name: 'Serie A',        country: 'Italia',     flag: '🇮🇹' },
-  bundesliga: { id: 78,  name: 'Bundesliga',     country: 'Alemania',   flag: '🇩🇪' },
-  ligue1:     { id: 61,  name: 'Ligue 1',        country: 'Francia',    flag: '🇫🇷' },
+  laliga:     { code: 'PD',  id: 2014, name: 'La Liga',        country: 'España',     flag: '🇪🇸' },
+  premier:    { code: 'PL',  id: 2021, name: 'Premier League', country: 'Inglaterra', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+  seriea:     { code: 'SA',  id: 2019, name: 'Serie A',        country: 'Italia',     flag: '🇮🇹' },
+  bundesliga: { code: 'BL1', id: 2002, name: 'Bundesliga',     country: 'Alemania',   flag: '🇩🇪' },
+  ligue1:     { code: 'FL1', id: 2015, name: 'Ligue 1',        country: 'Francia',    flag: '🇫🇷' },
 };
 
-// Obtener partidos por liga y fecha
-export async function getFixtures(leagueId, date) {
-  const res = await fetch(
-    `${BASE_URL}/fixtures?league=${leagueId}&season=2024&date=${date}`,
-    { headers }
-  );
-  const data = await res.json();
-  return data.response || [];
+export function getDateString(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().split('T')[0];
 }
 
-// Obtener partidos en vivo
-export async function getLiveFixtures(leagueId) {
-  const res = await fetch(
-    `${BASE_URL}/fixtures?league=${leagueId}&live=all`,
-    { headers }
-  );
-  const data = await res.json();
-  return data.response || [];
+export async function getFixturesToday(leagueCode) {
+  const today = getDateString(0);
+  const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${today}&dateTo=${today}`);
+  return data.matches || [];
 }
 
-// Obtener partidos de una jornada completa (rango de fechas)
-export async function getFixturesByRound(leagueId, season = 2024) {
-  const res = await fetch(
-    `${BASE_URL}/fixtures/rounds?league=${leagueId}&season=${season}&current=true`,
-    { headers }
-  );
-  const roundData = await res.json();
-  const round = roundData.response?.[0];
-  if (!round) return [];
+export async function getRecentFixtures(leagueCode) {
+  const from = getDateString(-14);
+  const to = getDateString(0);
+  const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${from}&dateTo=${to}&status=FINISHED`);
+  return data.matches || [];
+}
 
-  const res2 = await fetch(
-    `${BASE_URL}/fixtures?league=${leagueId}&season=${season}&round=${encodeURIComponent(round)}`,
-    { headers }
-  );
-  const data = await res2.json();
-  return data.response || [];
+export async function getUpcomingFixtures(leagueCode) {
+  const from = getDateString(1);
+  const to = getDateString(14);
+  const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED`);
+  return data.matches || [];
+}
+
+export async function getLiveFixtures(leagueCode) {
+  const data = await apiFetch(`/competitions/${leagueCode}/matches?status=IN_PLAY,PAUSED,LIVE`);
+  return data.matches || [];
 }
