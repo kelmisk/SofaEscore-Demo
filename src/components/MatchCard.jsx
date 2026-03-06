@@ -32,7 +32,11 @@ function MatchCard({ match }) {
     if (status === 'PAUSED') return 'Descanso';
     if (isFinished) return 'Finalizado';
     if (match.utcDate) {
-      return new Date(match.utcDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      const date = new Date(match.utcDate);
+      const hora = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      const dia = date.toLocaleDateString('es-ES', { weekday: 'short' });
+      const fecha = date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' });
+      return `${dia.charAt(0).toUpperCase() + dia.slice(1)} ${hora}\n${fecha}`;
     }
     return '-';
   };
@@ -77,7 +81,9 @@ function MatchCard({ match }) {
         <div style={{ color: isLive ? '#e94560' : '#fff', fontWeight: 'bold', fontSize: 18 }}>
           {scoreText}
         </div>
-        <div style={{ color: '#888', fontSize: 11, marginTop: 2 }}>{getStatusLabel()}</div>
+        <div style={{ color: '#888', fontSize: 11, marginTop: 2, whiteSpace: 'pre-line', lineHeight: 1.4 }}>
+          {getStatusLabel()}
+        </div>
       </div>
 
       {/* Equipo visitante */}
