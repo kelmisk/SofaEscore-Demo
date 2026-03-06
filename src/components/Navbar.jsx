@@ -3,6 +3,17 @@ import { LEAGUES } from '../services/api';
 
 function Navbar() {
   const location = useLocation();
+  const active = (path) => location.pathname === path;
+
+  const linkStyle = (isActive) => ({
+    padding: '16px 12px',
+    color: isActive ? '#e94560' : '#aaa',
+    textDecoration: 'none',
+    fontSize: 14,
+    whiteSpace: 'nowrap',
+    borderBottom: isActive ? '2px solid #e94560' : '2px solid transparent',
+    fontWeight: isActive ? 'bold' : 'normal',
+  });
 
   return (
     <nav style={{
@@ -11,33 +22,20 @@ function Navbar() {
       borderBottom: '1px solid #2a2a3e',
       display: 'flex',
       alignItems: 'center',
-      gap: 8,
+      gap: 4,
       overflowX: 'auto',
     }}>
-      <Link to="/" style={{
-        padding: '16px 12px',
-        color: location.pathname === '/' ? '#e94560' : '#aaa',
-        textDecoration: 'none',
-        fontWeight: 'bold',
-        fontSize: 14,
-        whiteSpace: 'nowrap',
-        borderBottom: location.pathname === '/' ? '2px solid #e94560' : '2px solid transparent',
-      }}>
-        🏠 Inicio
-      </Link>
+      <Link to="/" style={linkStyle(active('/'))}>🏠 Inicio</Link>
 
       {Object.entries(LEAGUES).map(([key, league]) => (
-        <Link key={key} to={`/liga/${key}`} style={{
-          padding: '16px 12px',
-          color: location.pathname === `/liga/${key}` ? '#e94560' : '#aaa',
-          textDecoration: 'none',
-          fontSize: 14,
-          whiteSpace: 'nowrap',
-          borderBottom: location.pathname === `/liga/${key}` ? '2px solid #e94560' : '2px solid transparent',
-        }}>
+        <Link key={key} to={`/liga/${key}`} style={linkStyle(active(`/liga/${key}`))}>
           {league.flag} {league.name}
         </Link>
       ))}
+
+      <Link to="/buscar" style={{ ...linkStyle(active('/buscar')), marginLeft: 'auto' }}>
+        🔍 Buscar
+      </Link>
     </nav>
   );
 }

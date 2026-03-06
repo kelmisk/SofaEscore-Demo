@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import League from './pages/League';
+import Search from './pages/Search';
+import Team from './pages/Team';
 import Debug from './pages/Debug';
 
 function App() {
@@ -12,6 +14,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/liga/:leagueKey" element={<League />} />
+          <Route path="/buscar" element={<Search />} />
+          <Route path="/equipo/:teamId" element={<Team />} />
           <Route path="/debug" element={<Debug />} />
         </Routes>
       </div>

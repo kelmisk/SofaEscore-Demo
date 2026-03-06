@@ -2,34 +2,26 @@ const BASE_URL = '/api';
 const API_KEY = import.meta.env.VITE_FOOTBALL_API_KEY;
 const headers = { 'X-Auth-Token': API_KEY };
 
-// Cache: 5 minutos por ruta
 const cache = {};
 const CACHE_TTL = 5 * 60 * 1000;
 
-// Cola para limitar a 1 petición cada 700ms (max ~10/min)
 let lastRequestTime = 0;
 const MIN_INTERVAL = 700;
 
 async function apiFetch(path) {
-  // Devolver caché si existe y es reciente
   const now = Date.now();
   if (cache[path] && now - cache[path].ts < CACHE_TTL) {
     return cache[path].data;
   }
-
-  // Esperar si la última petición fue hace menos de 700ms
   const wait = MIN_INTERVAL - (Date.now() - lastRequestTime);
   if (wait > 0) await new Promise(r => setTimeout(r, wait));
   lastRequestTime = Date.now();
 
   const res = await fetch(`${BASE_URL}${path}`, { headers });
-
   if (res.status === 429) {
-    // Rate limit: esperar 15 segundos y reintentar
     await new Promise(r => setTimeout(r, 15000));
     return apiFetch(path);
   }
-
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   cache[path] = { data, ts: Date.now() };
@@ -48,6 +40,35 @@ export function getDateString(offsetDays = 0) {
   const d = new Date();
   d.setDate(d.getDate() + offsetDays);
   return d.toISOString().split('T')[0];
+}
+
+// Cargar todos los equipos de las 5 ligas (con caché larga)
+let allTeamsCache = null;
+export async function getAllTeams() {
+  if (allTeamsCache) return allTeamsCache;
+
+  const leagues = Object.values(LEAGUES);
+  const all = [];
+
+  // Peticiones secuenciales para no agotar el rate limit
+  for (const l of leagues) {
+    const data = await apiFetch(`/competitions/${l.code}/teams`);
+    const teams = (data.teams || []).map(t => ({ ...t, leagueName: l.name, leagueFlag: l.flag }));
+    all.push(...teams);
+  }
+
+  allTeamsCache = all;
+  return allTeamsCache;
+}
+
+// Buscar equipos localmente por nombre
+export async function searchTeams(query) {
+  const teams = await getAllTeams();
+  const q = query.toLowerCase();
+  return teams.filter(t =>
+    t.name?.toLowerCase().includes(q) ||
+    t.shortName?.toLowerCase().includes(q)
+  );
 }
 
 export async function getFixturesToday(leagueCode) {
@@ -72,5 +93,19 @@ export async function getUpcomingFixtures(leagueCode) {
 
 export async function getLiveFixtures(leagueCode) {
   const data = await apiFetch(`/competitions/${leagueCode}/matches?status=IN_PLAY,PAUSED,LIVE`);
+  return data.matches || [];
+}
+
+export async function getTeamRecentMatches(teamId) {
+  const from = getDateString(-60);
+  const to = getDateString(0);
+  const data = await apiFetch(`/teams/${teamId}/matches?dateFrom=${from}&dateTo=${to}&status=FINISHED`);
+  return data.matches || [];
+}
+
+export async function getTeamUpcomingMatches(teamId) {
+  const from = getDateString(1);
+  const to = getDateString(60);
+  const data = await apiFetch(`/teams/${teamId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED`);
   return data.matches || [];
 }

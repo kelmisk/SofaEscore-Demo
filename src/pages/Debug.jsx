@@ -22,18 +22,15 @@ function Debug() {
     }
   }
 
-  const today = new Date().toISOString().split('T')[0];
-
   const tests = [
-    { label: 'Últimos partidos La Liga', url: `${BASE_URL}/competitions/PD/matches?status=FINISHED&limit=5` },
-    { label: 'Partidos hoy (todas)', url: `${BASE_URL}/matches?date=${today}` },
-    { label: 'Próximos Premier', url: `${BASE_URL}/competitions/PL/matches?status=SCHEDULED` },
-    { label: 'Estado API Key', url: `${BASE_URL}/competitions` },
+    { label: 'Buscar "Real Madrid"', url: `${BASE_URL}/teams?name=Real%20Madrid` },
+    { label: 'Buscar "Real"', url: `${BASE_URL}/teams?name=Real` },
+    { label: 'Buscar "Barcelona"', url: `${BASE_URL}/teams?name=Barcelona` },
   ];
 
   return (
     <div style={{ padding: 24, color: '#fff' }}>
-      <h2 style={{ marginBottom: 16 }}>🔧 Debug football-data.org</h2>
+      <h2 style={{ marginBottom: 16 }}>🔧 Debug Búsqueda</h2>
       <p style={{ marginBottom: 16 }}>
         API Key: <code style={{ color: '#e94560' }}>{API_KEY ? API_KEY.slice(0, 8) + '...' : '❌ NO DETECTADA'}</code>
       </p>
@@ -50,18 +47,11 @@ function Debug() {
       </div>
 
       {loading && <p style={{ color: '#aaa' }}>Cargando {endpoint}...</p>}
-
       {result && (
         <>
           <h3 style={{ color: '#aaa', marginBottom: 8 }}>{endpoint}</h3>
-          <pre style={{
-            background: '#1a1a2e', padding: 16, borderRadius: 8,
-            fontSize: 12, overflow: 'auto', maxHeight: 500
-          }}>
-            {JSON.stringify(
-              result.matches ? { total: result.matches.length, first2: result.matches.slice(0, 2) } : result,
-              null, 2
-            )}
+          <pre style={{ background: '#1a1a2e', padding: 16, borderRadius: 8, fontSize: 12, overflow: 'auto', maxHeight: 500 }}>
+            {JSON.stringify(result.teams ? { total: result.teams.length, teams: result.teams.map(t => ({ id: t.id, name: t.name, area: t.area?.name })) } : result, null, 2)}
           </pre>
         </>
       )}
