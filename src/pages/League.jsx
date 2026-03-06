@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { LEAGUES, getLiveFixtures, getRecentFixtures, getUpcomingFixtures, getFixturesToday } from '../services/api';
 import MatchCard from '../components/MatchCard';
@@ -11,8 +11,8 @@ function League() {
   const [tab, setTab] = useState('Últimos partidos');
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const requestId = useRef(0); // identificador único por petición
 
-  // Resetear partidos al cambiar de liga
   useEffect(() => {
     setMatches([]);
     setTab('Últimos partidos');
@@ -20,22 +20,34 @@ function League() {
 
   useEffect(() => {
     if (!league) return;
+
+    const currentId = ++requestId.current; // incrementar en cada efecto
+
     async function fetchMatches() {
       setLoading(true);
-      setMatches([]);
       try {
         let data = [];
         if (tab === 'En Vivo')           data = await getLiveFixtures(league.code);
         if (tab === 'Hoy')               data = await getFixturesToday(league.code);
         if (tab === 'Últimos partidos')  data = await getRecentFixtures(league.code);
         if (tab === 'Próximos partidos') data = await getUpcomingFixtures(league.code);
-        setMatches(data);
+
+        // Solo actualizar si esta petición sigue siendo la más reciente
+        if (currentId === requestId.current) {
+          setMatches(data);
+        }
       } catch (err) {
-        console.error(err);
+        if (currentId === requestId.current) {
+          console.error(err);
+          setMatches([]);
+        }
       } finally {
-        setLoading(false);
+        if (currentId === requestId.current) {
+          setLoading(false);
+        }
       }
     }
+
     fetchMatches();
   }, [leagueKey, tab]);
 

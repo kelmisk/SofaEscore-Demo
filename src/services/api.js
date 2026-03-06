@@ -1,25 +1,38 @@
 const BASE_URL = '/api';
 const API_KEY = import.meta.env.VITE_FOOTBALL_API_KEY;
-
 const headers = { 'X-Auth-Token': API_KEY };
 
-// Cache con clave completa por path
+// Cache: 5 minutos por ruta
 const cache = {};
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
+const CACHE_TTL = 5 * 60 * 1000;
+
+// Cola para limitar a 1 petición cada 700ms (max ~10/min)
+let lastRequestTime = 0;
+const MIN_INTERVAL = 700;
 
 async function apiFetch(path) {
+  // Devolver caché si existe y es reciente
   const now = Date.now();
-  const key = path; // clave única por URL completa
-  if (cache[key] && now - cache[key].ts < CACHE_TTL) {
-    return cache[key].data;
+  if (cache[path] && now - cache[path].ts < CACHE_TTL) {
+    return cache[path].data;
   }
+
+  // Esperar si la última petición fue hace menos de 700ms
+  const wait = MIN_INTERVAL - (Date.now() - lastRequestTime);
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  lastRequestTime = Date.now();
+
   const res = await fetch(`${BASE_URL}${path}`, { headers });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `HTTP ${res.status}`);
+
+  if (res.status === 429) {
+    // Rate limit: esperar 15 segundos y reintentar
+    await new Promise(r => setTimeout(r, 15000));
+    return apiFetch(path);
   }
+
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
-  cache[key] = { data, ts: now };
+  cache[path] = { data, ts: Date.now() };
   return data;
 }
 
