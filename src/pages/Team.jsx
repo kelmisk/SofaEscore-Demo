@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getTeamRecentMatches, getTeamUpcomingMatches, getStandings, LEAGUES } from '../services/api';
+import { getOdds, findOddsForMatch } from '../services/odds';
 import MatchCard from '../components/MatchCard';
 
 const TABS = ['Últimos partidos', 'Próximos partidos'];
@@ -10,6 +11,7 @@ function Team() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('Últimos partidos');
   const [matches, setMatches] = useState([]);
+  const [oddsMap, setOddsMap] = useState({});
   const [teamInfo, setTeamInfo] = useState(null);
   const [standing, setStanding] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,6 +29,23 @@ function Team() {
         if (currentId !== requestId.current) return;
 
         setMatches(data);
+
+        // Cargar cuotas solo para próximos partidos
+        if (tab === 'Próximos partidos' && data.length > 0) {
+          const leagueCode = data[0].competition?.code;
+          if (leagueCode) {
+            const oddsList = await getOdds(leagueCode);
+            if (currentId !== requestId.current) return;
+            const map = {};
+            data.forEach(m => {
+              const o = findOddsForMatch(oddsList, m.homeTeam?.name, m.awayTeam?.name);
+              if (o) map[m.id] = o;
+            });
+            setOddsMap(map);
+          }
+        } else {
+          setOddsMap({});
+        }
 
         // Extraer info del equipo y liga del primer partido
         if (data.length > 0) {
@@ -143,7 +162,7 @@ function Team() {
         ? <p style={{ color: '#aaa' }}>Cargando...</p>
         : matches.length === 0
           ? <p style={{ color: '#888' }}>No hay partidos disponibles.</p>
-          : matches.map(m => <MatchCard key={m.id} match={m} />)
+          : matches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)
       }
     </div>
   );

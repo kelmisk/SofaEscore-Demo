@@ -13,7 +13,10 @@ const ODDS_TTL = 10 * 60 * 1000;
 const oddsCache = {};
 
 function normalize(s) {
-  return s?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+  return s?.toLowerCase()
+    .replace(/\bfc\b|\baf\b|\bsc\b|\bac\b|\bcd\b|\brc\b|\bsv\b|\bcf\b/g, '') // quitar sufijos de club
+    .replace(/[^a-z0-9]/g, '') // quitar caracteres especiales
+    .trim() || '';
 }
 
 export async function getOdds(leagueCode) {
