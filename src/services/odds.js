@@ -9,8 +9,12 @@ const LEAGUE_KEYS = {
   FL1: 'soccer_france_ligue_one',
 };
 
+const ODDS_TTL = 10 * 60 * 1000;
 const oddsCache = {};
-const ODDS_TTL = 10 * 60 * 1000; // 10 minutos
+
+function normalize(s) {
+  return s?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+}
 
 export async function getOdds(leagueCode) {
   const sportKey = LEAGUE_KEYS[leagueCode];
@@ -34,10 +38,8 @@ export async function getOdds(leagueCode) {
   }
 }
 
-// Buscar cuotas de un partido concreto por nombre de equipos
 export function findOddsForMatch(oddsList, homeName, awayName) {
   if (!oddsList?.length) return null;
-  const normalize = s => s?.toLowerCase().replace(/[^a-z0-9]/g, '');
   const homeN = normalize(homeName);
   const awayN = normalize(awayName);
 

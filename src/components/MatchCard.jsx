@@ -105,8 +105,13 @@ function MatchCard({ match, odds }) {
         </div>
       </div>
 
-      {/* Cuotas — solo en partidos no empezados */}
-      {isUpcoming && odds && <OddsDisplay odds={odds} />}
+      {/* Cuotas — próximos partidos y finalizados */}
+      {odds && (
+        <OddsDisplay
+          odds={odds}
+          winner={isFinished ? match.score?.winner : null}
+        />
+      )}
     </div>
   );
 }

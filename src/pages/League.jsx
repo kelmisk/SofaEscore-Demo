@@ -38,17 +38,18 @@ function League() {
         if (currentId !== requestId.current) return;
         setMatches(data);
 
-        // Cargar cuotas solo para próximos partidos y hoy
-        if (tab === 'Próximos partidos' || tab === 'Hoy' || tab === 'En Vivo') {
+        // Cuotas solo para partidos futuros y en vivo (API gratuita no tiene histórico)
+        const map = {};
+        if (tab !== 'Últimos partidos') {
           const oddsList = await getOdds(league.code);
           if (currentId !== requestId.current) return;
-          const map = {};
           data.forEach(m => {
             const o = findOddsForMatch(oddsList, m.homeTeam?.name, m.awayTeam?.name);
             if (o) map[m.id] = o;
           });
-          setOddsMap(map);
         }
+        if (currentId !== requestId.current) return;
+        setOddsMap(map);
       } catch (err) {
         if (currentId === requestId.current) {
           console.error(err);
