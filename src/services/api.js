@@ -5,6 +5,7 @@ const headers = { 'X-Auth-Token': API_KEY };
 
 const cache = {};
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutos
+const LIVE_TTL  =  1 * 60 * 1000; // 1 minuto para rutas en vivo
 
 // Cargar caché desde localStorage al arrancar
 function loadCacheFromStorage() {
@@ -31,9 +32,10 @@ loadCacheFromStorage();
 let lastRequestTime = 0;
 const MIN_INTERVAL = 1500; // 1.5s entre peticiones = máx 40/min, bien por debajo del límite
 
-async function apiFetch(path) {
+async function apiFetch(path, live = false) {
   const now = Date.now();
-  if (cache[path] && now - cache[path].ts < CACHE_TTL) {
+  const ttl = live ? LIVE_TTL : CACHE_TTL;
+  if (cache[path] && now - cache[path].ts < ttl) {
     return cache[path].data;
   }
   const wait = MIN_INTERVAL - (Date.now() - lastRequestTime);
@@ -129,8 +131,7 @@ export async function getFixturesToday(leagueCode) {
 // Una sola petición para todos los partidos del día de las 5 ligas
 export async function getAllMatchesToday() {
   const today = getDateString(0);
-  const leagueIds = Object.values(LEAGUES).map(l => l.id).join(',');
-  const data = await apiFetch(`/matches?date=${today}`);
+  const data = await apiFetch(`/matches?date=${today}`, true); // live TTL
   const leagueIdSet = new Set(Object.values(LEAGUES).map(l => l.id));
   return (data.matches || []).filter(m => leagueIdSet.has(m.competition?.id));
 }
@@ -160,7 +161,7 @@ export async function getUpcomingFixtures(leagueCode) {
 }
 
 export async function getLiveFixtures(leagueCode) {
-  const data = await apiFetch(`/competitions/${leagueCode}/matches?status=IN_PLAY,PAUSED,LIVE`);
+  const data = await apiFetch(`/competitions/${leagueCode}/matches?status=IN_PLAY,PAUSED,LIVE`, true); // live TTL
   return data.matches || [];
 }
 
