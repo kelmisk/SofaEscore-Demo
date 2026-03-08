@@ -60,9 +60,19 @@ function MatchCard({ match, odds }) {
       borderLeft: isLive ? '3px solid #f5c518' : '3px solid transparent',
       transition: 'background 0.2s',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* Competición */}
+      {match.competition && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+          {match.competition.emblem && (
+            <img src={match.competition.emblem} alt="" style={{ width: 14, height: 14, objectFit: 'contain', opacity: 0.8 }} />
+          )}
+          <span style={{ color: '#5a6a8a', fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            {match.competition.name}
+          </span>
+        </div>
+      )}
 
-        {/* Equipo local */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '38%' }}>
           {homeCrest
             ? <img src={homeCrest} alt={homeName} style={{ width: 28, height: 28, objectFit: 'contain' }} />
