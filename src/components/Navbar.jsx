@@ -31,7 +31,7 @@ function Navbar() {
       zIndex: 100,
       boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
     }}>
-      <Link to="/" style={{ ...linkStyle(active('/')), fontSize: 15 }}>⚽ SofaEscore</Link>
+      <Link to="/" style={{ ...linkStyle(active('/')), fontSize: 15 }}>SofaEscore</Link>
 
       <div style={{ width: 1, height: 20, background: '#1a2540', margin: '0 8px', flexShrink: 0 }} />
 
