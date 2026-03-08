@@ -15,17 +15,20 @@ function Team() {
   const [teamInfo, setTeamInfo] = useState(null);
   const [standing, setStanding] = useState(null);
   const [liveMatch, setLiveMatch] = useState(null);
+  const [liveLoading, setLiveLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const requestId = useRef(0);
 
-  // Comprobar si el equipo tiene partido en vivo
+  // Comprobar partido en vivo de forma independiente y rápida
   useEffect(() => {
+    setLiveLoading(true);
     getAllMatchesToday().then(matches => {
       const live = matches.find(m =>
         ['IN_PLAY', 'PAUSED', 'LIVE'].includes(m.status) &&
         (String(m.homeTeam?.id) === String(teamId) || String(m.awayTeam?.id) === String(teamId))
       );
       setLiveMatch(live || null);
+      setLiveLoading(false);
     });
   }, [teamId]);
 
@@ -138,14 +141,16 @@ function Team() {
       )}
 
       {/* Partido en vivo */}
-      {liveMatch && (
+      {liveLoading ? (
+        <div style={{ height: 60, background: '#0d1526', borderRadius: 12, marginBottom: 20, border: '1px solid #1a2540', opacity: 0.5 }} />
+      ) : liveMatch ? (
         <div style={{ marginBottom: 20 }}>
           <h2 style={{ color: '#f5c518', fontSize: 14, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>⚡ En Vivo</h2>
           <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #f5c518' }}>
             <MatchCard match={liveMatch} />
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
