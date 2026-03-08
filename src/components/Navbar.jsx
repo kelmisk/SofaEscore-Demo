@@ -37,7 +37,10 @@ function Navbar() {
 
       {Object.entries(LEAGUES).map(([key, league]) => (
         <Link key={key} to={`/liga/${key}`} style={linkStyle(active(`/liga/${key}`))}>
-          {league.flag} {league.name}
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <img src={league.emblem} alt={league.name} style={{ width: 16, height: 16, objectFit: 'contain', filter: league.dark ? 'brightness(0) invert(1)' : 'none' }} />
+            {league.name}
+          </span>
         </Link>
       ))}
 

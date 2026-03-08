@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import OddsDisplay from './OddsDisplay';
+import { LEAGUES } from '../services/api';
 
 function TeamBadge({ name }) {
   const initials = name ? name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
@@ -61,16 +62,21 @@ function MatchCard({ match, odds }) {
       transition: 'background 0.2s',
     }}>
       {/* Competición */}
-      {match.competition && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-          {match.competition.emblem && (
-            <img src={match.competition.emblem} alt="" style={{ width: 14, height: 14, objectFit: 'contain', opacity: 0.8 }} />
-          )}
-          <span style={{ color: '#5a6a8a', fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-            {match.competition.name}
-          </span>
-        </div>
-      )}
+      {match.competition && (() => {
+        const leagueData = Object.values(LEAGUES).find(l => l.code === match.competition.code);
+        const emblem = leagueData?.emblem || match.competition.emblem;
+        const isDark = leagueData?.dark || false;
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+            {emblem && (
+              <img src={emblem} alt="" style={{ width: 14, height: 14, objectFit: 'contain', opacity: 0.9, filter: isDark ? 'brightness(0) invert(1)' : 'none' }} />
+            )}
+            <span style={{ color: '#5a6a8a', fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              {match.competition.name}
+            </span>
+          </div>
+        );
+      })()}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '38%' }}>
