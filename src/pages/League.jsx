@@ -79,9 +79,18 @@ function League() {
             background: tab === t ? '#f5c518' : '#1a2540',
             color: tab === t ? '#0a0e1a' : '#8899bb',
             fontWeight: tab === t ? '700' : '500',
-            fontSize: 13,
+            fontSize: 13, display: 'flex', alignItems: 'center', gap: 6,
           }}>
             {t}
+            {tab === t && !loading && (
+              <span style={{
+                background: tab === t ? 'rgba(0,0,0,0.2)' : '#0a0e1a',
+                color: tab === t ? '#0a0e1a' : '#8899bb',
+                fontSize: 11, fontWeight: '800', borderRadius: 20, padding: '1px 6px',
+              }}>
+                {matches.length}
+              </span>
+            )}
           </button>
         ))}
         <button
