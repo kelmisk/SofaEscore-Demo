@@ -88,7 +88,7 @@ function Team() {
       {/* Cabecera */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
         <button onClick={() => navigate(-1)} style={{
-          background: '#1a2540', border: 'none', color: '#8899bb',
+          background: 'transparent', border: '1px solid #2a3a5c', color: '#8899bb',
           padding: '8px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: '600',
         }}>← Volver</button>
         {teamInfo?.crest && (
