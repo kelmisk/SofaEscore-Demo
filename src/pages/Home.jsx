@@ -53,14 +53,20 @@ function Home() {
     <div style={{ maxWidth: 800, margin: '0 auto', padding: 16 }}>
       {liveMatches.length > 0 && (
         <section style={{ marginBottom: 24 }}>
-          <h2 style={{ color: '#f5c518', marginBottom: 12, fontSize: 15, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}>⚡ En Vivo</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <h2 style={{ color: '#f5c518', fontSize: 15, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}>⚡ En Vivo</h2>
+            <span style={{ background: '#f5c518', color: '#0a0e1a', fontSize: 11, fontWeight: '800', borderRadius: 20, padding: '2px 8px' }}>{liveMatches.length}</span>
+          </div>
           <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #1a2540' }}>
             {liveMatches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)}
           </div>
         </section>
       )}
       <section>
-        <h2 style={{ color: '#f0f4ff', marginBottom: 12, fontSize: 15, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}>📅 Hoy — {today}</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+          <h2 style={{ color: '#f0f4ff', fontSize: 15, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}>📅 Hoy — {today}</h2>
+          <span style={{ background: '#1a2540', color: '#8899bb', fontSize: 11, fontWeight: '800', borderRadius: 20, padding: '2px 8px' }}>{otherMatches.length}</span>
+        </div>
         <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #1a2540' }}>
           {otherMatches.length === 0
             ? <p style={{ color: '#5a6a8a', padding: 24 }}>No hay más partidos programados hoy.</p>
