@@ -28,7 +28,7 @@ function MatchCard({ match, odds }) {
 
   const getStatusLabel = () => {
     if (status === 'PAUSED') return 'Descanso';
-    if (isLive) return '⚡ En vivo';
+    if (isLive) return 'En vivo';
     if (isFinished) return 'Finalizado';
     if (match.utcDate) {
       const date = new Date(match.utcDate);

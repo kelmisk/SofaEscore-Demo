@@ -15,7 +15,9 @@ function loadCacheFromStorage() {
       const parsed = JSON.parse(stored);
       const now = Date.now();
       Object.entries(parsed).forEach(([key, val]) => {
-        if (now - val.ts < CACHE_TTL) cache[key] = val;
+        // No cargar caché de rutas en vivo desde localStorage
+        const isLiveRoute = key.includes('/matches?date=') || key.includes('dateFrom=') && key.includes('dateTo=');
+        if (!isLiveRoute && now - val.ts < CACHE_TTL) cache[key] = val;
       });
     }
   } catch {}
@@ -124,7 +126,7 @@ export async function searchTeams(query) {
 
 export async function getFixturesToday(leagueCode) {
   const today = getDateString(0);
-  const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${today}&dateTo=${today}`);
+  const data = await apiFetch(`/competitions/${leagueCode}/matches?dateFrom=${today}&dateTo=${today}`, true); // live TTL
   return data.matches || [];
 }
 

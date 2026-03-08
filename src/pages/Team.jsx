@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTeamRecentMatches, getTeamUpcomingMatches, getStandings, LEAGUES } from '../services/api';
+import { getTeamRecentMatches, getTeamUpcomingMatches, getStandings, getAllMatchesToday } from '../services/api';
 import { getOdds, findOddsForMatch } from '../services/odds';
 import MatchCard from '../components/MatchCard';
 
@@ -14,8 +14,20 @@ function Team() {
   const [oddsMap, setOddsMap] = useState({});
   const [teamInfo, setTeamInfo] = useState(null);
   const [standing, setStanding] = useState(null);
+  const [liveMatch, setLiveMatch] = useState(null);
   const [loading, setLoading] = useState(true);
   const requestId = useRef(0);
+
+  // Comprobar si el equipo tiene partido en vivo
+  useEffect(() => {
+    getAllMatchesToday().then(matches => {
+      const live = matches.find(m =>
+        ['IN_PLAY', 'PAUSED', 'LIVE'].includes(m.status) &&
+        (String(m.homeTeam?.id) === String(teamId) || String(m.awayTeam?.id) === String(teamId))
+      );
+      setLiveMatch(live || null);
+    });
+  }, [teamId]);
 
   useEffect(() => {
     const currentId = ++requestId.current;
@@ -121,6 +133,16 @@ function Team() {
                 <div style={{ color: '#5a6a8a', fontSize: 11, marginTop: 2 }}>{label}</div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Partido en vivo */}
+      {liveMatch && (
+        <div style={{ marginBottom: 20 }}>
+          <h2 style={{ color: '#f5c518', fontSize: 14, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>⚡ En Vivo</h2>
+          <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #f5c518' }}>
+            <MatchCard match={liveMatch} />
           </div>
         </div>
       )}
