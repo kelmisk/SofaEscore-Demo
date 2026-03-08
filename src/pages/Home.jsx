@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllMatchesToday, getDateString, LEAGUES } from '../services/api';
+import { getAllMatchesToday, getDateString, LEAGUES, clearMatchCache } from '../services/api';
 import { getOdds, findOddsForMatch } from '../services/odds';
 import MatchCard from '../components/MatchCard';
 
@@ -13,7 +13,9 @@ function Home() {
     async function fetchAll() {
       setLoading(true);
       try {
-        const all = await getAllMatchesToday();
+    // Limpiar caché de partidos antes de cada fetch para garantizar datos frescos
+    clearMatchCache();
+    const all = await getAllMatchesToday();
         setMatches(all);
 
         // Cargar cuotas por liga
@@ -33,7 +35,11 @@ function Home() {
         setLoading(false);
       }
     }
+
     fetchAll();
+    // Refrescar cada 60 segundos para actualizar estado en vivo
+    const interval = setInterval(fetchAll, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const liveMatches = matches.filter(m =>

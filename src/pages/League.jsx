@@ -15,8 +15,11 @@ function League() {
   const [oddsMap, setOddsMap] = useState({});
   const [loading, setLoading] = useState(true);
   const requestId = useRef(0);
+  // Caché por tab para no mostrar pantalla en blanco al cambiar
+  const tabCache = useRef({});
 
   useEffect(() => {
+    tabCache.current = {};
     setMatches([]);
     setOddsMap({});
     setTab('Últimos partidos');
@@ -25,6 +28,14 @@ function League() {
   useEffect(() => {
     if (!league) return;
     const currentId = ++requestId.current;
+
+    // Mostrar caché inmediatamente si existe
+    if (tabCache.current[tab]) {
+      setMatches(tabCache.current[tab].matches);
+      setOddsMap(tabCache.current[tab].oddsMap);
+      setLoading(false);
+      return;
+    }
 
     async function fetchMatches() {
       setLoading(true);
@@ -38,7 +49,6 @@ function League() {
         if (currentId !== requestId.current) return;
         setMatches(data);
 
-        // Cuotas solo para partidos futuros y en vivo (API gratuita no tiene histórico)
         const map = {};
         if (tab !== 'Últimos partidos') {
           const oddsList = await getOdds(league.code);
@@ -50,11 +60,11 @@ function League() {
         }
         if (currentId !== requestId.current) return;
         setOddsMap(map);
+
+        // Guardar en caché
+        tabCache.current[tab] = { matches: data, oddsMap: map };
       } catch (err) {
-        if (currentId === requestId.current) {
-          console.error(err);
-          setMatches([]);
-        }
+        if (currentId === requestId.current) { console.error(err); setMatches([]); }
       } finally {
         if (currentId === requestId.current) setLoading(false);
       }
@@ -84,8 +94,7 @@ function League() {
             {t}
             {tab === t && !loading && (
               <span style={{
-                background: tab === t ? 'rgba(0,0,0,0.2)' : '#0a0e1a',
-                color: tab === t ? '#0a0e1a' : '#8899bb',
+                background: 'rgba(0,0,0,0.2)', color: '#0a0e1a',
                 fontSize: 11, fontWeight: '800', borderRadius: 20, padding: '1px 6px',
               }}>
                 {matches.length}

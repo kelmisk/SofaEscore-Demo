@@ -15,9 +15,9 @@ function loadCacheFromStorage() {
       const parsed = JSON.parse(stored);
       const now = Date.now();
       Object.entries(parsed).forEach(([key, val]) => {
-        // No cargar caché de rutas en vivo desde localStorage
-        const isLiveRoute = key.includes('/matches?date=') || key.includes('dateFrom=') && key.includes('dateTo=');
-        if (!isLiveRoute && now - val.ts < CACHE_TTL) cache[key] = val;
+        // No cargar NUNCA rutas de partidos desde localStorage — siempre frescos
+        const isMatchRoute = key.includes('/matches') || key.includes('/competitions/');
+        if (!isMatchRoute && now - val.ts < CACHE_TTL) cache[key] = val;
       });
     }
   } catch {}
@@ -29,10 +29,32 @@ function saveCacheToStorage() {
   } catch {}
 }
 
+// Limpiar siempre el caché de partidos del localStorage al arrancar
+try {
+  const stored = localStorage.getItem('api_cache');
+  if (stored) {
+    const parsed = JSON.parse(stored);
+    const cleaned = {};
+    Object.entries(parsed).forEach(([key, val]) => {
+      const isMatchRoute = key.includes('/matches') || key.includes('/competitions/');
+      if (!isMatchRoute) cleaned[key] = val;
+    });
+    localStorage.setItem('api_cache', JSON.stringify(cleaned));
+  }
+} catch {}
+
 loadCacheFromStorage();
 
 let lastRequestTime = 0;
 const MIN_INTERVAL = 1500; // 1.5s entre peticiones = máx 40/min, bien por debajo del límite
+
+export function clearMatchCache() {
+  Object.keys(cache).forEach(key => {
+    if (key.includes('/matches') || key.includes('/competitions/')) {
+      delete cache[key];
+    }
+  });
+}
 
 async function apiFetch(path, live = false) {
   const now = Date.now();
