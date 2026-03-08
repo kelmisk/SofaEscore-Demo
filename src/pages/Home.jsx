@@ -44,7 +44,7 @@ function Home() {
   );
 
   if (loading) return (
-    <div style={{ padding: 24, color: '#aaa', textAlign: 'center' }}>
+    <div style={{ padding: 24, color: '#8899bb', textAlign: 'center' }}>
       <p>⏳ Cargando partidos de hoy...</p>
     </div>
   );
@@ -52,17 +52,21 @@ function Home() {
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: 16 }}>
       {liveMatches.length > 0 && (
-        <section style={{ marginBottom: 32 }}>
-          <h2 style={{ color: '#e94560', marginBottom: 12 }}>⚡ En Vivo</h2>
-          {liveMatches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)}
+        <section style={{ marginBottom: 24 }}>
+          <h2 style={{ color: '#f5c518', marginBottom: 12, fontSize: 15, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}>⚡ En Vivo</h2>
+          <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #1a2540' }}>
+            {liveMatches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)}
+          </div>
         </section>
       )}
       <section>
-        <h2 style={{ color: '#fff', marginBottom: 12 }}>📅 Hoy — {today}</h2>
-        {otherMatches.length === 0
-          ? <p style={{ color: '#888' }}>No hay más partidos programados hoy.</p>
-          : otherMatches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)
-        }
+        <h2 style={{ color: '#f0f4ff', marginBottom: 12, fontSize: 15, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}>📅 Hoy — {today}</h2>
+        <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #1a2540' }}>
+          {otherMatches.length === 0
+            ? <p style={{ color: '#5a6a8a', padding: 24 }}>No hay más partidos programados hoy.</p>
+            : otherMatches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)
+          }
+        </div>
       </section>
     </div>
   );

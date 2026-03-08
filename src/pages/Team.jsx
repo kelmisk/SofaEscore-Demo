@@ -75,11 +75,11 @@ function Team() {
   }, [teamId, tab]);
 
   const positionColor = (pos) => {
-    if (pos <= 4) return '#4caf50';
-    if (pos === 5) return '#2196f3';
-    if (pos === 6) return '#ff9800';
-    if (pos >= 18) return '#e94560';
-    return '#aaa';
+    if (pos <= 4) return '#4ade80';
+    if (pos === 5) return '#60a5fa';
+    if (pos === 6) return '#fb923c';
+    if (pos >= 18) return '#f87171';
+    return '#8899bb';
   };
 
   return (
@@ -88,69 +88,51 @@ function Team() {
       {/* Cabecera */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
         <button onClick={() => navigate(-1)} style={{
-          background: '#2a2a3e', border: 'none', color: '#aaa',
-          padding: '8px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 16,
+          background: '#1a2540', border: 'none', color: '#8899bb',
+          padding: '8px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: '600',
         }}>← Volver</button>
         {teamInfo?.crest && (
           <img src={teamInfo.crest} alt={teamInfo.name} style={{ width: 48, height: 48, objectFit: 'contain' }} />
         )}
-        <h1 style={{ color: '#fff', fontSize: 22 }}>{teamInfo?.name || 'Equipo'}</h1>
+        <h1 style={{ color: '#f0f4ff', fontSize: 22, fontWeight: '700' }}>{teamInfo?.name || 'Equipo'}</h1>
       </div>
 
       {/* Clasificación */}
       {standing && (
         <div style={{
-          background: '#16213e', borderRadius: 12, padding: 16,
-          marginBottom: 24, border: '1px solid #2a2a3e',
+          background: '#0d1526', borderRadius: 12, padding: 16,
+          marginBottom: 24, border: '1px solid #1a2540',
         }}>
-          <div style={{ color: '#888', fontSize: 12, marginBottom: 10 }}>
+          <div style={{ color: '#5a6a8a', fontSize: 12, marginBottom: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 }}>
             🏆 {standing.leagueName} — Clasificación
           </div>
-          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ color: positionColor(standing.position), fontSize: 28, fontWeight: 'bold' }}>
-                {standing.position}º
+          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+            {[
+              { label: 'Posición', value: `${standing.position}º`, color: positionColor(standing.position) },
+              { label: 'Puntos', value: standing.points, color: '#f5c518' },
+              { label: 'PJ', value: standing.playedGames, color: '#f0f4ff' },
+              { label: 'G', value: standing.won, color: '#4ade80' },
+              { label: 'E', value: standing.draw, color: '#8899bb' },
+              { label: 'P', value: standing.lost, color: '#f87171' },
+              { label: 'DG', value: standing.goalDifference > 0 ? `+${standing.goalDifference}` : standing.goalDifference, color: standing.goalDifference >= 0 ? '#4ade80' : '#f87171' },
+            ].map(({ label, value, color }) => (
+              <div key={label} style={{ textAlign: 'center' }}>
+                <div style={{ color, fontSize: 26, fontWeight: '800' }}>{value}</div>
+                <div style={{ color: '#5a6a8a', fontSize: 11, marginTop: 2 }}>{label}</div>
               </div>
-              <div style={{ color: '#888', fontSize: 11 }}>Posición</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#fff', fontSize: 28, fontWeight: 'bold' }}>{standing.points}</div>
-              <div style={{ color: '#888', fontSize: 11 }}>Puntos</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#fff', fontSize: 28, fontWeight: 'bold' }}>{standing.playedGames}</div>
-              <div style={{ color: '#888', fontSize: 11 }}>PJ</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#4caf50', fontSize: 28, fontWeight: 'bold' }}>{standing.won}</div>
-              <div style={{ color: '#888', fontSize: 11 }}>G</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#aaa', fontSize: 28, fontWeight: 'bold' }}>{standing.draw}</div>
-              <div style={{ color: '#888', fontSize: 11 }}>E</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#e94560', fontSize: 28, fontWeight: 'bold' }}>{standing.lost}</div>
-              <div style={{ color: '#888', fontSize: 11 }}>P</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ color: standing.goalDifference >= 0 ? '#4caf50' : '#e94560', fontSize: 28, fontWeight: 'bold' }}>
-                {standing.goalDifference > 0 ? `+${standing.goalDifference}` : standing.goalDifference}
-              </div>
-              <div style={{ color: '#888', fontSize: 11 }}>DG</div>
-            </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         {TABS.map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
-            padding: '8px 16px', borderRadius: 20, border: 'none', cursor: 'pointer',
-            background: tab === t ? '#e94560' : '#2a2a3e',
-            color: tab === t ? '#fff' : '#aaa',
-            fontWeight: tab === t ? 'bold' : 'normal',
+            padding: '7px 16px', borderRadius: 20, border: 'none', cursor: 'pointer',
+            background: tab === t ? '#f5c518' : '#1a2540',
+            color: tab === t ? '#0a0e1a' : '#8899bb',
+            fontWeight: tab === t ? '700' : '500', fontSize: 13,
           }}>
             {t}
           </button>
@@ -158,12 +140,14 @@ function Team() {
       </div>
 
       {/* Partidos */}
-      {loading
-        ? <p style={{ color: '#aaa' }}>Cargando...</p>
-        : matches.length === 0
-          ? <p style={{ color: '#888' }}>No hay partidos disponibles.</p>
-          : matches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)
-      }
+      <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #1a2540' }}>
+        {loading
+          ? <p style={{ color: '#8899bb', padding: 24 }}>Cargando...</p>
+          : matches.length === 0
+            ? <p style={{ color: '#5a6a8a', padding: 24 }}>No hay partidos disponibles.</p>
+            : matches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)
+        }
+      </div>
     </div>
   );
 }

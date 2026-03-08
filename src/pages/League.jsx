@@ -67,33 +67,36 @@ function League() {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: 16 }}>
-      <h1 style={{ color: '#fff', marginBottom: 16 }}>{league.flag} {league.name}</h1>
+      <h1 style={{ color: '#f0f4ff', marginBottom: 16, fontSize: 20, fontWeight: '700' }}>{league.flag} {league.name}</h1>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
         {TABS.map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
-            padding: '8px 16px', borderRadius: 20, border: 'none', cursor: 'pointer',
-            background: tab === t ? '#e94560' : '#2a2a3e',
-            color: tab === t ? '#fff' : '#aaa',
-            fontWeight: tab === t ? 'bold' : 'normal',
+            padding: '7px 16px', borderRadius: 20, border: 'none', cursor: 'pointer',
+            background: tab === t ? '#f5c518' : '#1a2540',
+            color: tab === t ? '#0a0e1a' : '#8899bb',
+            fontWeight: tab === t ? '700' : '500',
+            fontSize: 13,
           }}>
             {t}
           </button>
         ))}
         <button
           onClick={() => navigate(`/liga/${leagueKey}/clasificacion`)}
-          style={{ padding: '8px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', background: '#2a2a3e', color: '#aaa' }}
+          style={{ padding: '7px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', background: '#1a2540', color: '#8899bb', fontSize: 13 }}
         >
           🏆 Clasificación
         </button>
       </div>
 
-      {loading
-        ? <p style={{ color: '#aaa' }}>Cargando...</p>
-        : matches.length === 0
-          ? <p style={{ color: '#888' }}>No hay partidos disponibles.</p>
-          : matches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)
-      }
+      <div style={{ background: '#0d1526', borderRadius: 12, overflow: 'hidden', border: '1px solid #1a2540' }}>
+        {loading
+          ? <p style={{ color: '#8899bb', padding: 24 }}>Cargando...</p>
+          : matches.length === 0
+            ? <p style={{ color: '#5a6a8a', padding: 24 }}>No hay partidos disponibles.</p>
+            : matches.map(m => <MatchCard key={m.id} match={m} odds={oddsMap[m.id]} />)
+        }
+      </div>
     </div>
   );
 }

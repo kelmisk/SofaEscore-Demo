@@ -2,16 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import OddsDisplay from './OddsDisplay';
 
 function TeamBadge({ name }) {
-  const initials = name
-    ? name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
-    : '?';
-  const colors = ['#e94560', '#0f3460', '#533483', '#16213e', '#1a1a2e'];
-  const color = colors[(name?.charCodeAt(0) || 0) % colors.length];
+  const initials = name ? name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?';
   return (
     <div style={{
-      width: 28, height: 28, borderRadius: '50%', background: color,
+      width: 30, height: 30, borderRadius: '50%', background: '#1e2a45',
+      border: '1px solid #2a3a5c',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 10, fontWeight: 'bold', color: '#fff', flexShrink: 0,
+      fontSize: 10, fontWeight: 'bold', color: '#8899bb', flexShrink: 0,
     }}>
       {initials}
     </div>
@@ -30,8 +27,8 @@ function MatchCard({ match, odds }) {
   const scoreText = homeScore !== null ? `${homeScore} - ${awayScore}` : 'vs';
 
   const getStatusLabel = () => {
-    if (isLive) return '⚡ En vivo';
     if (status === 'PAUSED') return 'Descanso';
+    if (isLive) return '⚡ En vivo';
     if (isFinished) return 'Finalizado';
     if (match.utcDate) {
       const date = new Date(match.utcDate);
@@ -51,19 +48,22 @@ function MatchCard({ match, odds }) {
   const awayCrest = match.awayTeam?.crest;
 
   const teamStyle = {
-    color: '#eee', fontSize: 14, cursor: 'pointer',
-    textDecoration: 'none', transition: 'color 0.2s',
+    color: '#d0daf0', fontSize: 14, cursor: 'pointer',
+    fontWeight: '500', transition: 'color 0.2s',
   };
 
   return (
     <div style={{
-      padding: '12px 16px', borderBottom: '1px solid #2a2a3e',
-      background: isLive ? '#1a1a2e' : '#16213e',
-      borderLeft: isLive ? '3px solid #e94560' : '3px solid transparent',
+      padding: '14px 16px',
+      borderBottom: '1px solid #111d30',
+      background: isLive ? '#0f1d35' : '#0d1526',
+      borderLeft: isLive ? '3px solid #f5c518' : '3px solid transparent',
+      transition: 'background 0.2s',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+
         {/* Equipo local */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '38%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '38%' }}>
           {homeCrest
             ? <img src={homeCrest} alt={homeName} style={{ width: 28, height: 28, objectFit: 'contain' }} />
             : <TeamBadge name={homeName} />
@@ -71,33 +71,37 @@ function MatchCard({ match, odds }) {
           <span
             style={teamStyle}
             onClick={() => homeId && navigate(`/equipo/${homeId}`)}
-            onMouseEnter={e => e.target.style.color = '#e94560'}
-            onMouseLeave={e => e.target.style.color = '#eee'}
-          >
-            {homeName}
-          </span>
+            onMouseEnter={e => e.target.style.color = '#f5c518'}
+            onMouseLeave={e => e.target.style.color = '#d0daf0'}
+          >{homeName}</span>
         </div>
 
         {/* Marcador */}
-        <div style={{ textAlign: 'center', minWidth: 100 }}>
-          <div style={{ color: isLive ? '#e94560' : '#fff', fontWeight: 'bold', fontSize: 18 }}>
+        <div style={{ textAlign: 'center', minWidth: 110 }}>
+          <div style={{
+            color: isLive ? '#f5c518' : '#ffffff',
+            fontWeight: '800', fontSize: 20, letterSpacing: 1,
+          }}>
             {scoreText}
           </div>
-          <div style={{ color: '#888', fontSize: 11, marginTop: 2, whiteSpace: 'pre-line', lineHeight: 1.4 }}>
+          <div style={{
+            color: isLive ? '#f5c518' : '#5a6a8a',
+            fontSize: 11, marginTop: 3,
+            whiteSpace: 'pre-line', lineHeight: 1.5,
+            fontWeight: isLive ? '600' : '400',
+          }}>
             {getStatusLabel()}
           </div>
         </div>
 
         {/* Equipo visitante */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '38%', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '38%', justifyContent: 'flex-end' }}>
           <span
             style={teamStyle}
             onClick={() => awayId && navigate(`/equipo/${awayId}`)}
-            onMouseEnter={e => e.target.style.color = '#e94560'}
-            onMouseLeave={e => e.target.style.color = '#eee'}
-          >
-            {awayName}
-          </span>
+            onMouseEnter={e => e.target.style.color = '#f5c518'}
+            onMouseLeave={e => e.target.style.color = '#d0daf0'}
+          >{awayName}</span>
           {awayCrest
             ? <img src={awayCrest} alt={awayName} style={{ width: 28, height: 28, objectFit: 'contain' }} />
             : <TeamBadge name={awayName} />
@@ -105,12 +109,8 @@ function MatchCard({ match, odds }) {
         </div>
       </div>
 
-      {/* Cuotas — próximos partidos y finalizados */}
       {odds && (
-        <OddsDisplay
-          odds={odds}
-          winner={isFinished ? match.score?.winner : null}
-        />
+        <OddsDisplay odds={odds} winner={isFinished ? match.score?.winner : null} />
       )}
     </div>
   );
