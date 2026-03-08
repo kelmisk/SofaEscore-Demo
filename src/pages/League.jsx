@@ -67,7 +67,10 @@ function League() {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: 16 }}>
-      <h1 style={{ color: '#f0f4ff', marginBottom: 16, fontSize: 20, fontWeight: '700' }}>{league.flag} {league.name}</h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        {league.emblem && <img src={league.emblem} alt={league.name} onError={e => e.target.style.display='none'} style={{ width: 40, height: 40, objectFit: 'contain', filter: league.dark ? 'brightness(0) invert(1)' : 'none' }} />}
+        <h1 style={{ color: '#f0f4ff', fontSize: 20, fontWeight: '700' }}>{league.name}</h1>
+      </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
         {TABS.map(t => (

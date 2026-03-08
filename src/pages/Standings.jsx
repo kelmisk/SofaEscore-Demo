@@ -38,7 +38,8 @@ function Standings() {
           padding: '8px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: '600',
         }}>← Volver</button>
         <h1 style={{ color: '#f0f4ff', fontSize: 20, fontWeight: '700' }}>
-          {league.flag} {league.name} — Clasificación
+          {league.emblem && <img src={league.emblem} alt={league.name} onError={e => e.target.style.display='none'} style={{ width: 32, height: 32, objectFit: 'contain', marginRight: 10, verticalAlign: 'middle', filter: league.dark ? 'brightness(0) invert(1)' : 'none' }} />}
+          {league.name} — Clasificación
         </h1>
       </div>
 
