@@ -79,11 +79,12 @@ async function apiFetch(path, live = false) {
 }
 
 export const LEAGUES = {
-  laliga:     { code: 'PD',  id: 2014, name: 'La Liga',        country: 'España',     flag: '🇪🇸', emblem: '/leagues/laliga.png',     dark: false },
-  premier:    { code: 'PL',  id: 2021, name: 'Premier League', country: 'Inglaterra', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', emblem: '/leagues/premier.png',    dark: true  },
-  seriea:     { code: 'SA',  id: 2019, name: 'Serie A',        country: 'Italia',     flag: '🇮🇹', emblem: '/leagues/seriea.png',     dark: false },
-  bundesliga: { code: 'BL1', id: 2002, name: 'Bundesliga',     country: 'Alemania',   flag: '🇩🇪', emblem: '/leagues/bundesliga.png', dark: false },
-  ligue1:     { code: 'FL1', id: 2015, name: 'Ligue 1',        country: 'Francia',    flag: '🇫🇷', emblem: '/leagues/ligue1.png',     dark: true  },
+  laliga:     { code: 'PD',  id: 2014, name: 'La Liga',          country: 'España',     flag: '🇪🇸', emblem: '/leagues/laliga.png',     dark: false },
+  premier:    { code: 'PL',  id: 2021, name: 'Premier League',   country: 'Inglaterra', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', emblem: '/leagues/premier.png',    dark: true  },
+  seriea:     { code: 'SA',  id: 2019, name: 'Serie A',          country: 'Italia',     flag: '🇮🇹', emblem: '/leagues/seriea.png',     dark: false },
+  bundesliga: { code: 'BL1', id: 2002, name: 'Bundesliga',       country: 'Alemania',   flag: '🇩🇪', emblem: '/leagues/bundesliga.png', dark: false },
+  ligue1:     { code: 'FL1', id: 2015, name: 'Ligue 1',         country: 'Francia',    flag: '🇫🇷', emblem: '/leagues/ligue1.png',     dark: true  },
+  champions:  { code: 'CL',  id: 2001, name: 'Champions League', country: 'Europa',     flag: '🏆', emblem: '/leagues/champions.png',  dark: true  },
 };
 
 export function getDateString(offsetDays = 0) {

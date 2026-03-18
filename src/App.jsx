@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import League from './pages/League';
+import Champions from './pages/Champions';
 import Search from './pages/Search';
 import Team from './pages/Team';
 import Standings from './pages/Standings';
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/liga/:leagueKey" element={<League />} />
           <Route path="/liga/:leagueKey/clasificacion" element={<Standings />} />
+          <Route path="/champions" element={<Champions />} />
           <Route path="/buscar" element={<Search />} />
           <Route path="/equipo/:teamId" element={<Team />} />
           <Route path="/debug" element={<Debug />} />

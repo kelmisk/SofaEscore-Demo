@@ -64,7 +64,8 @@ function MatchCard({ match, odds }) {
       {match.competition && (() => {
         const leagueData = Object.values(LEAGUES).find(l => l.code === match.competition.code);
         const emblem = leagueData?.emblem || match.competition.emblem;
-        const isDark = leagueData?.dark || false;
+        const darkCodes = new Set(['PL', 'FL1', 'CL', 'EL', 'ECL']);
+        const isDark = leagueData?.dark || darkCodes.has(match.competition.code);
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
             {emblem && (

@@ -35,7 +35,7 @@ function Navbar() {
 
       <div style={{ width: 1, height: 20, background: '#1a2540', margin: '0 8px', flexShrink: 0 }} />
 
-      {Object.entries(LEAGUES).map(([key, league]) => (
+      {Object.entries(LEAGUES).filter(([key]) => key !== 'champions').map(([key, league]) => (
         <Link key={key} to={`/liga/${key}`} style={linkStyle(active(`/liga/${key}`))}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <img src={league.emblem} alt={league.name} style={{ width: 16, height: 16, objectFit: 'contain', filter: league.dark ? 'brightness(0) invert(1)' : 'none' }} />
@@ -43,6 +43,15 @@ function Navbar() {
           </span>
         </Link>
       ))}
+
+      <div style={{ width: 1, height: 20, background: '#1a2540', margin: '0 4px', flexShrink: 0 }} />
+
+      <Link to="/champions" style={linkStyle(active('/champions'))}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <img src={LEAGUES.champions.emblem} alt="Champions League" style={{ width: 16, height: 16, objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+          Champions
+        </span>
+      </Link>
 
       <Link to="/buscar" style={{ ...linkStyle(active('/buscar')), marginLeft: 'auto' }}>
         🔍 Buscar
