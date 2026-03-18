@@ -30,7 +30,6 @@ function MatchCard({ match, odds }) {
   const getStatusLabel = () => {
     if (status === 'PAUSED') return 'Descanso';
     if (isLive) return 'En vivo';
-    if (isFinished) return 'Finalizado';
     if (match.utcDate) {
       const date = new Date(match.utcDate);
       const hora = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
