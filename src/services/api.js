@@ -203,10 +203,7 @@ export async function getTeamRecentMatches(teamId) {
 
 export async function getTeamUpcomingMatches(teamId) {
   const from = getDateString(0);
-  const to = getDateString(30);
-  const data = await apiFetch(`/teams/${teamId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED`);
-  const matches = data.matches || [];
-
-  // Solo el próximo partido
-  return matches.slice(0, 5);
+  const to = getDateString(60);
+  const data = await apiFetch(`/teams/${teamId}/matches?dateFrom=${from}&dateTo=${to}&status=SCHEDULED,TIMED`);
+  return (data.matches || []).slice(0, 10);
 }
