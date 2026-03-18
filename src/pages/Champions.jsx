@@ -40,6 +40,11 @@ function Champions() {
         if (tab === 'Últimos partidos')  data = await getRecentFixtures(league.code);
         if (tab === 'Próximos partidos') data = await getUpcomingFixtures(league.code);
 
+        // Ordenar últimos de más reciente a más antiguo
+        if (tab === 'Últimos partidos') {
+          data = [...data].sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
+        }
+
         if (currentId !== requestId.current) return;
         setMatches(data);
 
