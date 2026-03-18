@@ -198,7 +198,8 @@ export async function getTeamRecentMatches(teamId) {
   const from = getDateString(-60);
   const to = getDateString(0);
   const data = await apiFetch(`/teams/${teamId}/matches?dateFrom=${from}&dateTo=${to}&status=FINISHED`);
-  return data.matches || [];
+  const matches = data.matches || [];
+  return matches.sort((a, b) => new Date(b.utcDate) - new Date(a.utcDate));
 }
 
 export async function getTeamUpcomingMatches(teamId) {
